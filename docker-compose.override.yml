@@ -1,0 +1,46 @@
+# ==========================================================
+# Development override — auto-loaded ONLY when running:
+#   docker compose up -d
+#
+# To run production config locally:
+#   docker compose -f docker-compose.yml up -d
+# ==========================================================
+
+services:
+  app:
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+      - ./storage:/var/www/html/storage
+
+  worker:
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+      - ./storage:/var/www/html/storage
+
+  scheduler:
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+      - ./storage:/var/www/html/storage
+
+  # Local-only email catcher
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: tesfa-mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - tesfa-network
