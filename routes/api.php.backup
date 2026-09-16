@@ -1,0 +1,84 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\{
+    PropertyController,
+    AVMController,
+    FraudController,
+    CreditScoreController,
+    DemandForecastController,
+    DynamicPricingController,
+    ChatbotController,
+    BehaviorController,
+    BankApiController
+};
+
+/*
+|--------------------------------------------------------------------------
+| Public API Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('v1')->group(function () {
+    // Public property search
+    Route::get('/properties', [PropertyController::class, 'index']);
+    Route::get('/properties/{property}', [PropertyController::class, 'show']);
+    Route::get('/properties/{property}/valuation', [AVMController::class, 'valuate']);
+
+    // Market intelligence (public)
+    Route::get('/market/neighborhoods', [PropertyController::class, 'neighborhoods']);
+    Route::get('/market/trends/{neighborhood}', [PropertyController::class, 'trends']);
+    Route::get('/demand-forecast/{neighborhood}', [DemandForecastController::class, 'show']);
+
+    // Behavior tracking (anonymous allowed)
+    Route::post('/behavior/track', [BehaviorController::class, 'track'])->middleware('throttle:60,1');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated API Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+    // Properties
+    Route::apiResource('properties', PropertyController::class)->except(['index', 'show']);
+    Route::post('/properties/{property}/fraud-scan', [FraudController::class, 'scan']);
+
+    // Credit Score
+    Route::get('/credit-score', [CreditScoreController::class, 'show']);
+    Route::get('/credit-score/history', [CreditScoreController::class, 'history']);
+    Route::get('/credit-score/financing-options', [CreditScoreController::class, 'financingOptions']);
+
+    // Demand Forecast
+    Route::get('/demand-forecast/{neighborhood}/heatmap', [DemandForecastController::class, 'heatmap']);
+    Route::get('/demand-forecast/{neighborhood}/recommendations', [DemandForecastController::class, 'recommendations']);
+
+    // Dynamic Pricing
+    Route::get('/pricing/{property}/recommendation', [DynamicPricingController::class, 'recommendation']);
+    Route::post('/pricing/{property}/apply', [DynamicPricingController::class, 'apply']);
+    Route::post('/pricing/apply-all', [DynamicPricingController::class, 'applyAll']);
+    Route::get('/pricing/{property}/revenue-impact', [DynamicPricingController::class, 'revenueImpact']);
+
+    // Chatbot
+    Route::post('/chatbot/message', [ChatbotController::class, 'message'])->middleware('throttle:10,1');
+    Route::post('/chatbot/rate', [ChatbotController::class, 'rate']);
+    Route::get('/chatbot/history/{sessionId}', [ChatbotController::class, 'history']);
+
+    // Behavior
+    Route::get('/behavior/summary', [BehaviorController::class, 'summary']);
+    Route::get('/behavior/recommendations', [BehaviorController::class, 'recommendations']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Bank API Routes (separate authentication)
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('v1/bank')->middleware(['bank.api', 'throttle:100,1'])->group(function () {
+    Route::get('/credit-score/{user}', [BankApiController::class, 'creditScore']);
+    Route::post('/rent-to-own/approval', [BankApiController::class, 'approvalDecision']);
+    Route::get('/portfolio/risk', [BankApiController::class, 'portfolioRisk']);
+    Route::post('/webhook/payment', [BankApiController::class, 'paymentWebhook']);
+});

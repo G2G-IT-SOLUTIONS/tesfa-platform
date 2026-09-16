@@ -1,0 +1,48 @@
+# Dependencies
+/vendor
+/node_modules
+
+# Laravel
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+/storage/app/backup-temp/*
+/storage/app/private/*
+
+# Environment
+.env
+.env.backup
+.env.production
+.env.local
+
+# Composer & npm
+composer.phar
+auth.json
+npm-debug.log
+yarn-error.log
+
+# IDE / OS
+/.idea
+/.vscode
+.DS_Store
+Thumbs.db
+*.swp
+
+# Tests
+.phpunit.result.cache
+.phpunit.cache
+
+# Build artifacts
+/public/build
+/public/hot
+
+# Logs
+*.log
+
+# Optional: allow local .env.example
+!.env.example

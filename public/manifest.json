@@ -1,0 +1,27 @@
+{
+    "name": "Tesfa - Verified Property Platform",
+    "short_name": "Tesfa",
+    "description": "Find, verify, and buy properties in Ethiopia with confidence",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#F5F0E8",
+    "theme_color": "#078930",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/assets/images/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/assets/images/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["business", "lifestyle", "shopping"],
+    "lang": "en",
+    "dir": "ltr"
+}
